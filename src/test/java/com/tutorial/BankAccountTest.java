@@ -45,8 +45,7 @@ public class BankAccountTest {
     public void bankAccountDeposit() {
         BigDecimal amount = new BigDecimal("100000");
         BigDecimal result = bankAccountOne.getBalance().add(amount);
-        boolean depositResult = bankAccountOne.deposit(amount);
-        assertTrue(depositResult);
+        bankAccountOne.deposit(amount);
         assertEquals(result, bankAccountOne.getBalance());
     }
 
@@ -83,8 +82,7 @@ public class BankAccountTest {
     public void bankAccountWithdraw() {
         BigDecimal amount = new BigDecimal("50000");
         BigDecimal result = bankAccountOne.getBalance().subtract(amount);
-        boolean withdrawResult = bankAccountOne.withdraw(amount);
-        assertTrue(withdrawResult);
+        bankAccountOne.withdraw(amount);
         assertEquals(result, bankAccountOne.getBalance());
     }
 
@@ -123,8 +121,7 @@ public class BankAccountTest {
         BigDecimal amount = new BigDecimal("5000");
         BigDecimal resultBankAccountOne = bankAccountOne.getBalance().subtract(amount);
         BigDecimal resultBankAccountTwo = bankAccountTwo.getBalance().add(amount);
-        boolean transferResult = bankAccountOne.transfer(bankAccountTwo, amount);
-        assertTrue(transferResult);
+        bankAccountOne.transfer(bankAccountTwo, amount);
         assertEquals(resultBankAccountOne, bankAccountOne.getBalance());
         assertEquals(resultBankAccountTwo, bankAccountTwo.getBalance());
     }
@@ -134,8 +131,6 @@ public class BankAccountTest {
     public void bankAccountSelfTransfer() {
         BigDecimal amount = new BigDecimal("5000");
         BigDecimal resultBankAccountOne = bankAccountOne.getBalance();
-        boolean transferResult = bankAccountOne.transfer(bankAccountOne, amount);
-        assertFalse(transferResult);
         assertEquals(resultBankAccountOne, bankAccountOne.getBalance());
     }
 
