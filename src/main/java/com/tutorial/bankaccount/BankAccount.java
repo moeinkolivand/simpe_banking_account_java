@@ -39,13 +39,8 @@ public class BankAccount {
             throw new SelfTransferException("You Cant Transfer To Your Self");
         }
         this.validateBalance(amount, this.getBalance());
-        try {
-            this.balance = this.balance.subtract(amount);
-            to.deposit(amount);
-        } catch (Exception e) {
-            this.balance = this.balance.add(amount);
-            throw new RuntimeException(e);
-        }
+        this.balance = this.balance.subtract(amount);
+        to.deposit(amount);
         return this.getBalance();
     }
 

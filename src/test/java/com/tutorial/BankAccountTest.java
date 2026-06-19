@@ -136,4 +136,18 @@ public class BankAccountTest {
         assertThrows(InvalidAmountException.class, () -> bankAccountOne.transfer(bankAccountTwo, amount));
         assertEquals(resultBankAccountOne, bankAccountOne.getBalance());
     }
+    @Test
+    @DisplayName("Perform A Transfer That Will Be Roll Backed")
+    public void bankAccountTransferRollBackScenario() {
+        BigDecimal amount = new BigDecimal("600000");
+        BigDecimal currentBalanceAccountOne = bankAccountOne.getBalance();
+        BigDecimal desiredBalanceAccountOneAfterTransfer = currentBalanceAccountOne.subtract(amount);
+        BigDecimal desiredBalanceAccountTwoAfterTransfer = bankAccountTwo.getBalance().add(amount);
+        bankAccountOne.transfer(bankAccountTwo, amount);
+        assertEquals(bankAccountOne.getBalance(), desiredBalanceAccountOneAfterTransfer);
+        assertEquals(bankAccountTwo.getBalance(), desiredBalanceAccountTwoAfterTransfer);
+        assertThrows(InsufficientFundsException.class, () -> bankAccountOne.transfer(bankAccountTwo, amount));
+        assertEquals(bankAccountOne.getBalance(), desiredBalanceAccountOneAfterTransfer);
+        assertEquals(bankAccountTwo.getBalance(), desiredBalanceAccountTwoAfterTransfer);
+    }
 }
