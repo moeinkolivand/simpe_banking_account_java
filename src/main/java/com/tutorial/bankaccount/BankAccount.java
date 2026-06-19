@@ -16,6 +16,9 @@ public class BankAccount {
         this.accountNumber = accountNumber;
         this.accountHolder = accountHolder;
         this.balance = Objects.requireNonNullElseGet(balance, () -> BigDecimal.ZERO);
+        if (this.balance.compareTo(BigDecimal.ZERO) < 0) {
+            throw new InvalidAmountException("starting balance cannot be negative: " + this.balance);
+        }
         this.overDraftLimit = overDraftLimit;
     }
 

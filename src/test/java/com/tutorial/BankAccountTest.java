@@ -102,7 +102,7 @@ public class BankAccountTest {
     }
 
     @Test
-    @DisplayName("Perform A Transfer")
+    @DisplayName("Perform A Transfer With Insufficient Balance")
     public void bankAccountTransferWithInsufficientBalance() {
         BigDecimal amount = new BigDecimal("5000000000000000");
         assertThrows(InsufficientFundsException.class, () -> bankAccountOne.transfer(bankAccountTwo, amount));
