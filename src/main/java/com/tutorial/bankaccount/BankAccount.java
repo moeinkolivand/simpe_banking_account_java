@@ -33,6 +33,7 @@ public class BankAccount {
     }
 
     public BigDecimal transfer(BankAccount to, BigDecimal amount) throws InsufficientFundsException {
+        Objects.requireNonNull(to, "The Destination Cannot Be null");
         this.validateAmount(amount);
         if (Objects.equals(this, to)) {
             throw new SelfTransferException("You Cant Transfer To Your Self");

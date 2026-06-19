@@ -1,10 +1,13 @@
 package com.tutorial;
 
-import com.tutorial.bankaccount.BankAccount;
-import com.tutorial.bankaccount.InvalidAmountException;
+import com.tutorial.bankaccount.*;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.math.BigDecimal;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -34,11 +37,14 @@ public class BankAccountTest {
 
     }
 
-    @AfterEach
-    void tearDown() {
-        bankAccountOne = null;
-        bankAccountTwo = null;
+    private static Stream<Arguments> invalidAmountProvider() {
+        return Stream.of(
+                Arguments.of(new BigDecimal("-100000")),
+                Arguments.of(new BigDecimal("0")),
+                Arguments.of((Object) null)
+        );
     }
+
 
     @Test
     @DisplayName("Perform A Simple Deposit")
@@ -49,28 +55,10 @@ public class BankAccountTest {
         assertEquals(result, bankAccountOne.getBalance());
     }
 
-    @Test
-    @DisplayName("Perform A Negative Deposit")
-    public void bankAccountNegativeDeposit() {
-        BigDecimal amount = new BigDecimal("-100000");
-        BigDecimal result = bankAccountOne.getBalance();
-        assertThrows(InvalidAmountException.class, () -> bankAccountOne.deposit(amount));
-        assertEquals(result, bankAccountOne.getBalance());
-    }
-
-    @Test
-    @DisplayName("Perform A Null Deposit")
-    public void bankAccountNullDeposit() {
-        BigDecimal amount = null;
-        BigDecimal result = bankAccountOne.getBalance();
-        assertThrows(InvalidAmountException.class, () -> bankAccountOne.deposit(amount));
-        assertEquals(result, bankAccountOne.getBalance());
-    }
-
-    @Test
-    @DisplayName("Perform A Zero Deposit")
-    public void bankAccountZeroDeposit() {
-        BigDecimal amount = new BigDecimal("0");
+    @ParameterizedTest
+    @MethodSource("invalidAmountProvider")
+    @DisplayName("Perform A Negative - Zero - Null Deposit")
+    public void bankAccountNegativeDeposit(BigDecimal amount) {
         BigDecimal result = bankAccountOne.getBalance();
         assertThrows(InvalidAmountException.class, () -> bankAccountOne.deposit(amount));
         assertEquals(result, bankAccountOne.getBalance());
@@ -86,33 +74,20 @@ public class BankAccountTest {
         assertEquals(result, bankAccountOne.getBalance());
     }
 
-    @Test
+    @ParameterizedTest
+    @MethodSource("invalidAmountProvider")
     @DisplayName("Perform A Negative Withdraw")
-    public void bankAccountNegativeWithdraw() {
-        BigDecimal amount = new BigDecimal("-50000");
+    public void bankAccountNegativeWithdraw(BigDecimal amount) {
         BigDecimal result = bankAccountOne.getBalance();
         assertThrows(InvalidAmountException.class, () -> bankAccountOne.withdraw(amount));
         assertEquals(result, bankAccountOne.getBalance());
     }
 
-
     @Test
-    @DisplayName("Perform A Zero Withdraw")
-    public void bankAccountZeroWithdraw() {
-        BigDecimal amount = new BigDecimal("0");
-        BigDecimal result = bankAccountOne.getBalance();
-        assertThrows(InvalidAmountException.class, () -> bankAccountOne.withdraw(amount));
-        assertEquals(result, bankAccountOne.getBalance());
-    }
-
-
-    @Test
-    @DisplayName("Perform A Null Withdraw")
-    public void bankAccountNullWithdraw() {
-        BigDecimal amount = null;
-        BigDecimal result = bankAccountOne.getBalance();
-        assertThrows(InvalidAmountException.class, () -> bankAccountOne.withdraw(amount));
-        assertEquals(result, bankAccountOne.getBalance());
+    @DisplayName("Perform A WidthDraw With Insufficient Balance")
+    public void bankAccountWithdrawWithInsufficientBalance() {
+        BigDecimal amount = new BigDecimal("1000000000000000000");
+        assertThrows(InsufficientFundsException.class, () -> bankAccountOne.withdraw(amount));
     }
 
     @Test
@@ -127,27 +102,36 @@ public class BankAccountTest {
     }
 
     @Test
+    @DisplayName("Perform A Transfer")
+    public void bankAccountTransferWithInsufficientBalance() {
+        BigDecimal amount = new BigDecimal("5000000000000000");
+        assertThrows(InsufficientFundsException.class, () -> bankAccountOne.transfer(bankAccountTwo, amount));
+    }
+
+    @Test
     @DisplayName("Perform A Self Transfer")
     public void bankAccountSelfTransfer() {
         BigDecimal amount = new BigDecimal("5000");
         BigDecimal resultBankAccountOne = bankAccountOne.getBalance();
+        assertThrows(SelfTransferException.class, () -> bankAccountOne.transfer(bankAccountOne, amount));
         assertEquals(resultBankAccountOne, bankAccountOne.getBalance());
     }
 
 
     @Test
-    @DisplayName("Perform A Zero Transfer")
-    public void bankAccountZeroTransfer() {
-        BigDecimal amount = new BigDecimal("0");
+    @DisplayName("Perform A Transfer To null")
+    public void bankAccountTransferToNull() {
+        BigDecimal amount = new BigDecimal("5000");
         BigDecimal resultBankAccountOne = bankAccountOne.getBalance();
-        assertThrows(InvalidAmountException.class, () -> bankAccountOne.transfer(bankAccountTwo, amount));
+        assertThrows(RuntimeException.class, () -> bankAccountOne.transfer(null, amount));
         assertEquals(resultBankAccountOne, bankAccountOne.getBalance());
     }
 
-    @Test
-    @DisplayName("Perform A Negative Transfer")
-    public void bankAccountNegativeTransfer() {
-        BigDecimal amount = new BigDecimal("-1000");
+
+    @ParameterizedTest
+    @MethodSource("invalidAmountProvider")
+    @DisplayName("Perform A Zero Transfer")
+    public void bankAccountZeroTransfer(BigDecimal amount) {
         BigDecimal resultBankAccountOne = bankAccountOne.getBalance();
         assertThrows(InvalidAmountException.class, () -> bankAccountOne.transfer(bankAccountTwo, amount));
         assertEquals(resultBankAccountOne, bankAccountOne.getBalance());
