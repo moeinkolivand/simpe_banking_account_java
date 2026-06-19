@@ -1,6 +1,7 @@
 package com.tutorial;
 
 import com.tutorial.bankaccount.BankAccount;
+import com.tutorial.bankaccount.InvalidAmountException;
 import org.junit.jupiter.api.*;
 
 import java.math.BigDecimal;
@@ -54,8 +55,7 @@ public class BankAccountTest {
     public void bankAccountNegativeDeposit() {
         BigDecimal amount = new BigDecimal("-100000");
         BigDecimal result = bankAccountOne.getBalance();
-        boolean depositResult = bankAccountOne.deposit(amount);
-        assertFalse(depositResult);
+        assertThrows(InvalidAmountException.class, () -> bankAccountOne.deposit(amount));
         assertEquals(result, bankAccountOne.getBalance());
     }
 
@@ -64,8 +64,7 @@ public class BankAccountTest {
     public void bankAccountNullDeposit() {
         BigDecimal amount = null;
         BigDecimal result = bankAccountOne.getBalance();
-        boolean depositResult = bankAccountOne.deposit(amount);
-        assertFalse(depositResult);
+        assertThrows(InvalidAmountException.class, () -> bankAccountOne.deposit(amount));
         assertEquals(result, bankAccountOne.getBalance());
     }
 
@@ -74,8 +73,7 @@ public class BankAccountTest {
     public void bankAccountZeroDeposit() {
         BigDecimal amount = new BigDecimal("0");
         BigDecimal result = bankAccountOne.getBalance();
-        boolean depositResult = bankAccountOne.deposit(amount);
-        assertFalse(depositResult);
+        assertThrows(InvalidAmountException.class, () -> bankAccountOne.deposit(amount));
         assertEquals(result, bankAccountOne.getBalance());
     }
 
@@ -95,8 +93,7 @@ public class BankAccountTest {
     public void bankAccountNegativeWithdraw() {
         BigDecimal amount = new BigDecimal("-50000");
         BigDecimal result = bankAccountOne.getBalance();
-        boolean withdrawResult = bankAccountOne.withdraw(amount);
-        assertFalse(withdrawResult);
+        assertThrows(InvalidAmountException.class, () -> bankAccountOne.withdraw(amount));
         assertEquals(result, bankAccountOne.getBalance());
     }
 
@@ -106,8 +103,7 @@ public class BankAccountTest {
     public void bankAccountZeroWithdraw() {
         BigDecimal amount = new BigDecimal("0");
         BigDecimal result = bankAccountOne.getBalance();
-        boolean withdrawResult = bankAccountOne.withdraw(amount);
-        assertFalse(withdrawResult);
+        assertThrows(InvalidAmountException.class, () -> bankAccountOne.withdraw(amount));
         assertEquals(result, bankAccountOne.getBalance());
     }
 
@@ -117,8 +113,7 @@ public class BankAccountTest {
     public void bankAccountNullWithdraw() {
         BigDecimal amount = null;
         BigDecimal result = bankAccountOne.getBalance();
-        boolean withdrawResult = bankAccountOne.withdraw(amount);
-        assertFalse(withdrawResult);
+        assertThrows(InvalidAmountException.class, () -> bankAccountOne.withdraw(amount));
         assertEquals(result, bankAccountOne.getBalance());
     }
 
@@ -150,8 +145,7 @@ public class BankAccountTest {
     public void bankAccountZeroTransfer() {
         BigDecimal amount = new BigDecimal("0");
         BigDecimal resultBankAccountOne = bankAccountOne.getBalance();
-        boolean transferResult = bankAccountOne.transfer(bankAccountOne, amount);
-        assertFalse(transferResult);
+        assertThrows(InvalidAmountException.class, () -> bankAccountOne.transfer(bankAccountTwo, amount));
         assertEquals(resultBankAccountOne, bankAccountOne.getBalance());
     }
 
@@ -160,8 +154,7 @@ public class BankAccountTest {
     public void bankAccountNegativeTransfer() {
         BigDecimal amount = new BigDecimal("-1000");
         BigDecimal resultBankAccountOne = bankAccountOne.getBalance();
-        boolean transferResult = bankAccountOne.transfer(bankAccountOne, amount);
-        assertFalse(transferResult);
+        assertThrows(InvalidAmountException.class, () -> bankAccountOne.transfer(bankAccountTwo, amount));
         assertEquals(resultBankAccountOne, bankAccountOne.getBalance());
     }
 }
